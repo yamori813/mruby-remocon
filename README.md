@@ -20,11 +20,13 @@ end
 ```
 ## example
 ```ruby
-t = Remocon.new()
+# use radi_SH firmware
 # Sony Analog TV ch +
 on = [0x33, 0x09, 0x00]
 # Sony Analog TV ch -
 off = [0x33, 0x89, 0x00]
+
+t = Remocon.new()
 t.send(on)
 usleep 500000
 t.send(on)
