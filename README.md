@@ -3,6 +3,10 @@ Remocon class
 
 Bit Trade One IR Remocon controller
 
+This module use as follow repositorie source code.
+
+https://github.com/kjmkznr/bto_ir_cmd
+
 ## install by mrbgems
 - add conf.gem line to `build_config.rb`
 
