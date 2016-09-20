@@ -9,6 +9,20 @@ This module use as follow repositorie source code.
 
 https://github.com/kjmkznr/bto_ir_cmd
 
+send method Array parameter
+
+1 Byte hi 4 bit is length per 4 bit. 
+       lo 4 bit is signal type. (1 AEHA, 2 NEC, 3 SONY, 4 MITSUBISHI)
+2- Byte data
+
+Sample data Sony Alalog TV Channel +
+
+[0x33, 0x09, 0x00]
+
+length is 3 * 4  = 12 bit
+type is SONY
+data is 0x090
+
 ## install by mrbgems
 - add conf.gem line to `build_config.rb`
 
@@ -43,3 +57,9 @@ t.send(off)
 ## License
 under the MIT License:
 - see LICENSE file
+
+## Todo
+
+- error handling
+- long data support
+- receive support
