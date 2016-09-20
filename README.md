@@ -23,6 +23,8 @@ Sample data Sony Alalog TV Channel +
 
 length is 3 * 4  = 12 bit : type is SONY : data is 0x090
 
+Data bit is revers from naitive data. Because of populer this format.
+
 ## install by mrbgems
 - add conf.gem line to `build_config.rb`
 
