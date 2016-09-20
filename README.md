@@ -21,9 +21,7 @@ Sample data Sony Alalog TV Channel +
 
 [0x33, 0x09, 0x00]
 
-length is 3 * 4  = 12 bit
-type is SONY
-data is 0x090
+length is 3 * 4  = 12 bit : type is SONY : data is 0x090
 
 ## install by mrbgems
 - add conf.gem line to `build_config.rb`
