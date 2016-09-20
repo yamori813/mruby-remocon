@@ -11,9 +11,11 @@ https://github.com/kjmkznr/bto_ir_cmd
 
 send method Array parameter
 
-1 Byte hi 4 bit is length per 4 bit. 
-       lo 4 bit is signal type. (1 AEHA, 2 NEC, 3 SONY, 4 MITSUBISHI)
-2- Byte data
+|offset|note|
+|:--|:--|
+|1 Byte hi 4 bit | length per 4 bit |
+|1 Byte lo 4 bit | signal type. (1 AEHA, 2 NEC, 3 SONY, 4 MITSUBISHI)|
+|2- Byte | data |
 
 Sample data Sony Alalog TV Channel +
 
