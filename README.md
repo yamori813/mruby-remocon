@@ -3,6 +3,8 @@ Remocon class
 
 Bit Trade One IR Remocon controller
 
+http://bit-trade-one.co.jp/BTOpicture/Products/005-RS/
+
 This module use as follow repositorie source code.
 
 https://github.com/kjmkznr/bto_ir_cmd
@@ -21,6 +23,8 @@ end
 ## example
 ```ruby
 # use radi_SH firmware
+# http://a-desk.jp/modules/forum_hobby/index.php?cat_id=8
+
 # Sony Analog TV ch +
 on = [0x33, 0x09, 0x00]
 # Sony Analog TV ch -
