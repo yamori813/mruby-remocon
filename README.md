@@ -5,9 +5,15 @@ Bit Trade One IR Remocon controller
 
 http://bit-trade-one.co.jp/BTOpicture/Products/005-RS/
 
+This module make at FreeBSD and Mac OS X. May be work Linux.
+
 This module use as follow repositorie source code.
 
 https://github.com/kjmkznr/bto_ir_cmd
+
+Mac OS X support is as follow site code.
+
+http://dsas.blog.klab.org/archives/52097996.html
 
 send method Array parameter
 

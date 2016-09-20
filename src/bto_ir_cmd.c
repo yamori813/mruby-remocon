@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#if defined( __FreeBSD__) || defined(__APPLE__)
+#if defined( __FreeBSD__)
 #include <libusb.h>
 #else
 #include <libusb-1.0/libusb.h>
