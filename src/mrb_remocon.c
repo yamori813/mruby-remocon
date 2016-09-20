@@ -9,23 +9,37 @@
 #include "mruby.h"
 #include "mruby/data.h"
 #include "mrb_remocon.h"
-#ifdef __FreeBSD__
+#if defined( __APPLE__ )
+#include <IOKit/hid/IOHIDManager.h>
+#include <IOKit/hid/IOHIDKeys.h>
+#include <CoreFoundation/CoreFoundation.h>
+#elif defined( __FreeBSD__ )
 #include <libusb.h>
 #else
 #include <libusb-1.0/libusb.h>
 #endif
 
+#if defined( __APPLE__ )
+IOHIDDeviceRef open_device();
+void close_device(IOHIDDeviceRef dev);
+int Transfer(IOHIDDeviceRef refDevice, int ac, char *av);
+#else
 libusb_device_handle* open_device(libusb_context *ctx);
 void close_device(libusb_context *ctx, libusb_device_handle *devh);
 void write_device(struct libusb_device_handle *devh, unsigned char *cmd, int len
 );
+#endif
 
 
 #define DONE mrb_gc_arena_restore(mrb, 0);
 
 typedef struct {
+#if defined( __APPLE__ )
+  IOHIDDeviceRef dev;
+#else
   libusb_context *ctx;
   libusb_device_handle *devh;
+#endif
 } mrb_remocon_data;
 
 static const struct mrb_data_type mrb_remocon_data_type = {
@@ -44,9 +58,13 @@ static mrb_value mrb_remocon_init(mrb_state *mrb, mrb_value self)
   DATA_PTR(self) = NULL;
 
   data = (mrb_remocon_data *)mrb_malloc(mrb, sizeof(mrb_remocon_data));
+#if defined( __APPLE__ )
+  data->dev = open_device();
+#else
   data->ctx = NULL;
   libusb_init(&data->ctx);
   data->devh = open_device(data->ctx);
+#endif
 
   DATA_PTR(self) = data;
 
@@ -75,7 +93,11 @@ static mrb_value mrb_remocon_send(mrb_state *mrb, mrb_value self)
 
   mrb_remocon_data *data = DATA_PTR(self);
 
+#if defined( __APPLE__ )
+  Transfer(data->dev, size + 1, buf);
+#else
   write_device(data->devh, buf, 64);
+#endif
 
   return mrb_fixnum_value(0);
 }

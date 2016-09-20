@@ -1,9 +1,11 @@
+#if !defined( __APPLE__ )
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#ifdef __FreeBSD__
+#if defined( __FreeBSD__) || defined(__APPLE__)
 #include <libusb.h>
 #else
 #include <libusb-1.0/libusb.h>
@@ -335,4 +337,5 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
+#endif
 #endif
