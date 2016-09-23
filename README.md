@@ -23,11 +23,11 @@ send method Array parameter
 |1 Byte lo 4 bit | signal type. (1 AEHA, 2 NEC, 3 SONY, 4 MITSUBISHI)|
 |2- Byte | data |
 
-Sample data Sony Alalog TV Channel +
+Sample data Sony CD Player Play
 
-[0x33, 0x09, 0x00]
+[0x33, 0x4d, 0x10]
 
-length is 3 * 4  = 12 bit : type is SONY : data is 0x090
+length is 3 * 4  = 12 bit : type is SONY : data is 0x4d1
 
 Data byte bit is revers from naitive data. Because of populer this format.
 
@@ -47,19 +47,22 @@ end
 # use radi_SH firmware
 # http://a-desk.jp/modules/forum_hobby/index.php?cat_id=8
 
-# Sony Analog TV ch +
-on = [0x33, 0x09, 0x00]
-# Sony Analog TV ch -
-off = [0x33, 0x89, 0x00]
+# Sony CD Player Play
+play = [0x33, 0x4d, 0x10]
+# Sony CD Player Stop
+stop = [0x33, 0x1d, 0x10]
 
 t = Remocon.new()
-t.send(on)
-usleep 500000
-t.send(on)
-sleep 5
-t.send(off)
-usleep 500000
-t.send(off)
+
+t.send(play)
+usleep 45*1000
+t.send(play)
+
+sleep 10
+
+t.send(stop)
+usleep 45*1000
+t.send(stop)
 ```
 
 ## License
