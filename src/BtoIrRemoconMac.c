@@ -148,7 +148,7 @@ int Recieve(IOHIDDeviceRef refDevice, char *dat)
     memset(buf, 0x00, sizeof(buf));
     ReadFromeDevice(refDevice, buf, DEVICE_BUFSIZE, 0.5);
     
-    fprintf(stderr, "waiting...\n");
+//    fprintf(stderr, "waiting...\n");
     
     // デバイスをリモコンデータ受信待ちモードに
     memset(buf, 0xFF, sizeof(buf));
