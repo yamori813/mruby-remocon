@@ -178,11 +178,12 @@ int Recieve(IOHIDDeviceRef refDevice, char *dat)
         len = ReadFromeDevice(refDevice, buf, DEVICE_BUFSIZE, 0.5);
         if (buf[1] == 0x50 && buf[2] != 0) {
             // 受信データありなら 16 進表示
+			/*
             for (i = 0; i < len; i++) {
                 printf("%02X", buf[i]);
             }
 			putchar('\n');
-
+			 */
             for (i = 0; i < len; ++i) {
                 dat[i] = buf[i];
             }
