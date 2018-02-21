@@ -53,7 +53,6 @@ static char bto_commands_ex[] = {
   BTO_CMD_SET_DATA_EX
 };
 
-#ifdef NOTUSE
 char get_command(int no, int extend) {
   char cmd;
   if (extend)
@@ -69,7 +68,6 @@ int get_data_length(int extend) {
   else
     return IR_DATA_SIZE;
 }
-#endif
 
 void close_device(libusb_context *ctx, libusb_device_handle *devh) {
   libusb_close(devh);
@@ -167,12 +165,11 @@ void write_device(struct libusb_device_handle *devh, unsigned char *cmd, int len
   }
 }
 
-#ifdef NOTUSE
 int read_device(struct libusb_device_handle *devh, unsigned char *buf, int bufsize) {
   int size = 0;
   memset(buf, 0x00, bufsize);
 
-  int r = libusb_interrupt_transfer(devh, BTO_EP_IN, buf, bufsize, &size, 1000);
+  int r = libusb_interrupt_transfer(devh, BTO_EP_IN, buf, bufsize, &size, 0);
   if (r < 0) {
     fprintf(stderr, "libusb_interrupt_transfer (%d): %s\n", r, strerror(errno));
     exit(1);
@@ -213,7 +210,7 @@ int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int lengt
     read_device(devh, buf, MAX_SIZE);
     if (buf[0] == cmd && buf[1] != 0) {
       for (i = 0; i < length; i++) {
-        data[i] = buf[i+1];
+        data[i] = buf[i];
       }
       retval = 1;
       break;
@@ -229,6 +226,7 @@ int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int lengt
   return retval;
 }
 
+#ifdef NOTUSE
 void transfer_ir(struct libusb_device_handle *devh, char *data, int length, int extend) {
   unsigned char buf[MAX_SIZE];
   int i;

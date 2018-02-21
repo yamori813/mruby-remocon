@@ -134,9 +134,10 @@ int Transfer(IOHIDDeviceRef refDevice, int ac, char *av)
 }
 
 // リモコンデータ受信モード
-int Display(IOHIDDeviceRef refDevice)
+int Recieve(IOHIDDeviceRef refDevice, char *dat)
 {
-    int i, sts = -1;
+    int i, sts = 0;
+	int len;
     unsigned char buf[DEVICE_BUFSIZE];
     
     // デバイスの送信バッファをクリア
@@ -174,13 +175,18 @@ int Display(IOHIDDeviceRef refDevice)
         buf[1] = 0x50;
         WriteToDevice(refDevice, buf, DEVICE_BUFSIZE);
         memset(buf, 0x00, sizeof(buf));
-        ReadFromeDevice(refDevice, buf, DEVICE_BUFSIZE, 0.5);
+        len = ReadFromeDevice(refDevice, buf, DEVICE_BUFSIZE, 0.5);
         if (buf[1] == 0x50 && buf[2] != 0) {
             // 受信データありなら 16 進表示
-            for (i = 0; i < 7; i++) {
-                printf("%02X", buf[i+2]);
+            for (i = 0; i < len; i++) {
+                printf("%02X", buf[i]);
             }
-            putchar('\n');
+			putchar('\n');
+
+            for (i = 0; i < len; ++i) {
+                dat[i] = buf[i];
+            }
+			sts = len;
             break;
         }
     }
@@ -192,7 +198,6 @@ int Display(IOHIDDeviceRef refDevice)
     WriteToDevice(refDevice, buf, DEVICE_BUFSIZE);
     memset(buf, 0x00, sizeof(buf));
     ReadFromeDevice(refDevice, buf, DEVICE_BUFSIZE, 0.5);
-    sts = 0;
 DONE:
     return sts;
 }
