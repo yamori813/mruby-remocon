@@ -11,9 +11,9 @@ This module use as follow repositorie source code.
 
 https://github.com/kjmkznr/bto_ir_cmd
 
-Mac OS X support is as follow site code.
+Mac OS X support is as follow library code.
 
-http://dsas.blog.klab.org/archives/52097996.html
+https://github.com/signal11/hidapi
 
 send method Array parameter
 

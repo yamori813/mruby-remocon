@@ -11,9 +11,9 @@
 #include "mruby/array.h"
 #include "mrb_remocon.h"
 #if defined( __APPLE__ )
-#include <IOKit/hid/IOHIDManager.h>
-#include <IOKit/hid/IOHIDKeys.h>
-#include <CoreFoundation/CoreFoundation.h>
+#include <string.h>
+#include <stdlib.h>
+#include "hidapi.h"
 #elif defined( __FreeBSD__ )
 #include <libusb.h>
 #else
@@ -21,10 +21,6 @@
 #endif
 
 #if defined( __APPLE__ )
-IOHIDDeviceRef open_device();
-void close_device(IOHIDDeviceRef dev);
-int Transfer(IOHIDDeviceRef refDevice, int ac, char *av);
-int Recieve(IOHIDDeviceRef refDevice, char *dat);
 #else
 libusb_device_handle* open_device(libusb_context *ctx);
 void close_device(libusb_context *ctx, libusb_device_handle *devh);
@@ -37,7 +33,7 @@ int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int lengt
 
 typedef struct {
 #if defined( __APPLE__ )
-  IOHIDDeviceRef dev;
+  hid_device* handle;
 #else
   libusb_context *ctx;
   libusb_device_handle *devh;
@@ -61,7 +57,23 @@ static mrb_value mrb_remocon_init(mrb_state *mrb, mrb_value self)
 
   data = (mrb_remocon_data *)mrb_malloc(mrb, sizeof(mrb_remocon_data));
 #if defined( __APPLE__ )
-  data->dev = open_device();
+  char *devPath;
+  hid_init();
+  struct hid_device_info* allDevices = hid_enumerate(0x22ea, 0x001e);
+  struct hid_device_info* currentDevice;
+  currentDevice = allDevices;
+
+  while (currentDevice)
+  {
+    int len = strlen(currentDevice->path);
+    if (currentDevice->path[len - 1] == '3') {
+      devPath = malloc(strlen(currentDevice->path) + 1);
+      strcpy(devPath, currentDevice->path);
+    }
+    currentDevice = currentDevice->next;
+  }
+  hid_free_enumeration(allDevices);
+  data->handle = hid_open_path(devPath);
 #else
   data->ctx = NULL;
   libusb_init(&data->ctx);
@@ -96,7 +108,7 @@ static mrb_value mrb_remocon_send(mrb_state *mrb, mrb_value self)
   mrb_remocon_data *data = DATA_PTR(self);
 
 #if defined( __APPLE__ )
-  Transfer(data->dev, size + 1, buf);
+  hid_write(data->handle, buf, 65);
 #else
   write_device(data->devh, buf, 64);
 #endif
@@ -109,14 +121,30 @@ static mrb_value mrb_remocon_recieve(mrb_state *mrb, mrb_value self)
 	int i;
 	int b;
 	int len;
+	unsigned char tmp[64];
 	unsigned char buf[64];
 	int off;
 	
 	mrb_remocon_data *data = DATA_PTR(self);
 	
 #if defined( __APPLE__ )
-	Recieve(data->dev, buf);
-	off = 2;
+	tmp[0] = 0x51;
+	tmp[1] = 0x01;
+	hid_write(data->handle, tmp, 65);
+	hid_read(data->handle, tmp, 65);
+        while(1) {
+	tmp[0] = 0x50;
+	hid_write(data->handle, tmp, 65);
+	hid_read(data->handle, buf, 65);
+        if(buf[1] != 0) {
+          break;
+        }
+        }
+	tmp[0] = 0x51;
+	tmp[1] = 0x00;
+	hid_write(data->handle, tmp, 65);
+	hid_read(data->handle, tmp, 65);
+	off = 1;
 #else
 	receive_ir(data->devh, buf, 64, 0);
 	off = 1;
