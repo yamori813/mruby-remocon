@@ -54,15 +54,18 @@ stop = [0x33, 0x1d, 0x10]
 
 t = Remocon.new()
 
-t.send(play)
-usleep 45*1000
-t.send(play)
+if t.open then
 
-sleep 10
+  t.send(play)
+  usleep 45*1000
+  t.send(play)
 
-t.send(stop)
-usleep 45*1000
-t.send(stop)
+  sleep 10
+
+  t.send(stop)
+  usleep 45*1000
+  t.send(stop)
+end
 ```
 
 ## License

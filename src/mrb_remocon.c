@@ -56,8 +56,18 @@ static mrb_value mrb_remocon_init(mrb_state *mrb, mrb_value self)
   DATA_PTR(self) = NULL;
 
   data = (mrb_remocon_data *)mrb_malloc(mrb, sizeof(mrb_remocon_data));
+
+  DATA_PTR(self) = data;
+
+  return self;
+}
+
+static mrb_value mrb_remocon_open(mrb_state *mrb, mrb_value self)
+{
+  mrb_remocon_data *data = DATA_PTR(self);
 #if defined( __APPLE__ )
   char *devPath;
+  devPath = NULL;
   hid_init();
   struct hid_device_info* allDevices = hid_enumerate(0x22ea, 0x001e);
   struct hid_device_info* currentDevice;
@@ -72,17 +82,23 @@ static mrb_value mrb_remocon_init(mrb_state *mrb, mrb_value self)
     }
     currentDevice = currentDevice->next;
   }
+  if (devPath == NULL) {
+    mrb_raise(mrb, E_RUNTIME_ERROR, "Can't open USB module.");
+    return mrb_nil_value();
+  }
   hid_free_enumeration(allDevices);
   data->handle = hid_open_path(devPath);
+  free(devPath);
 #else
   data->ctx = NULL;
   libusb_init(&data->ctx);
   data->devh = open_device(data->ctx);
+  if (data->devh == -1) {
+    mrb_raise(mrb, E_RUNTIME_ERROR, "Can't open USB module.");
+    return mrb_nil_value();
+  }
 #endif
-
-  DATA_PTR(self) = data;
-
-  return self;
+  return mrb_fixnum_value(1);
 }
 
 static mrb_value mrb_remocon_send(mrb_state *mrb, mrb_value self)
@@ -168,6 +184,7 @@ void mrb_mruby_remocon_gem_init(mrb_state *mrb)
   struct RClass *remocon;
   remocon = mrb_define_class(mrb, "Remocon", mrb->object_class);
   mrb_define_method(mrb, remocon, "initialize", mrb_remocon_init, MRB_ARGS_NONE());
+  mrb_define_method(mrb, remocon, "open", mrb_remocon_open, MRB_ARGS_NONE());
   mrb_define_method(mrb, remocon, "send", mrb_remocon_send, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, remocon, "recieve", mrb_remocon_recieve, MRB_ARGS_NONE());
   DONE;
