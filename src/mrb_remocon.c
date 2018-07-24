@@ -190,7 +190,7 @@ static mrb_value mrb_remocon_version(mrb_state *mrb, mrb_value self)
 	hid_write(data->handle, tmp, 65);
 	hid_read(data->handle, tmp, 65);
 #else
-	version(data->devh, buf, 64, 0);
+	version(data->devh, tmp, 64, 0);
 #endif
 	return mrb_str_new_cstr(mrb, (const char*)tmp + 1);
 }
