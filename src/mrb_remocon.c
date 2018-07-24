@@ -26,6 +26,7 @@ libusb_device_handle* open_device(libusb_context *ctx);
 void close_device(libusb_context *ctx, libusb_device_handle *devh);
 void write_device(struct libusb_device_handle *devh, unsigned char *cmd, int len);
 int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int length, int extend);
+int version(struct libusb_device_handle *devh, unsigned char *data, int length, int extend);
 #endif
 
 
