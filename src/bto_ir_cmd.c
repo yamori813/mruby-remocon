@@ -187,6 +187,15 @@ void clear_device_buffer(struct libusb_device_handle *devh) {
   read_device(devh, buf, MAX_SIZE);
 }
 
+int version(struct libusb_device_handle *devh, unsigned char *data, int length, int extend) {
+  unsigned char buf[MAX_SIZE];
+  buf[0] = 0x56;
+  write_device(devh, buf, MAX_SIZE);
+  read_device(devh, data, MAX_SIZE);
+
+  return;
+}
+
 int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int length, int extend) {
   unsigned char buf[MAX_SIZE];
   char cmd;

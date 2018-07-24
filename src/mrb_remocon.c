@@ -179,6 +179,21 @@ static mrb_value mrb_remocon_recieve(mrb_state *mrb, mrb_value self)
 	return array;
 }
 
+static mrb_value mrb_remocon_version(mrb_state *mrb, mrb_value self)
+{
+	unsigned char tmp[64];
+
+	mrb_remocon_data *data = DATA_PTR(self);
+#if defined( __APPLE__ )
+	tmp[0] = 0x56;
+	hid_write(data->handle, tmp, 65);
+	hid_read(data->handle, tmp, 65);
+#else
+	version(data->devh, buf, 64, 0);
+#endif
+	return mrb_str_new_cstr(mrb, (const char*)tmp + 1);
+}
+
 void mrb_mruby_remocon_gem_init(mrb_state *mrb)
 {
   struct RClass *remocon;
@@ -187,6 +202,7 @@ void mrb_mruby_remocon_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, remocon, "open", mrb_remocon_open, MRB_ARGS_NONE());
   mrb_define_method(mrb, remocon, "send", mrb_remocon_send, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, remocon, "recieve", mrb_remocon_recieve, MRB_ARGS_NONE());
+  mrb_define_method(mrb, remocon, "version", mrb_remocon_version, MRB_ARGS_NONE());
   DONE;
 }
 

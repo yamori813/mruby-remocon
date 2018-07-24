@@ -44,7 +44,6 @@ end
 ```
 ## example
 ```ruby
-# use radi_SH firmware
 # http://a-desk.jp/modules/forum_hobby/index.php?cat_id=8
 
 # Sony CD Player Play
