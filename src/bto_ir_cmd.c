@@ -193,7 +193,7 @@ int version(struct libusb_device_handle *devh, unsigned char *data, int length, 
   write_device(devh, buf, MAX_SIZE);
   read_device(devh, data, MAX_SIZE);
 
-  return;
+  return 1;
 }
 
 int receive_ir(struct libusb_device_handle *devh, unsigned char *data, int length, int extend) {
