@@ -1,4 +1,4 @@
-# mruby-remocon   [![Build Status](https://travis-ci.org/yamori813/mruby-remocon.svg?branch=master)](https://travis-ci.org/yamori813/mruby-remocon)
+# mruby-remocon    [![build](https://github.com/yamori813/mruby-remocon/actions/workflows/ci.yml/badge.svg)](https://github.com/yamori813/mruby-remocon/actions/workflows/ci.yml)
 Remocon class
 
 Bit Trade One IR Remocon controller
