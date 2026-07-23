@@ -75,4 +75,3 @@ under the MIT License:
 
 - error handling
 - long data support
-- receive support
