@@ -198,9 +198,14 @@ static mrb_value mrb_remocon_version(mrb_state *mrb, mrb_value self)
 }
 
 #if defined( __FreeBSD__ )
-// This is CDC BUG workaround
-static mrb_value mrb_remocon_cdcreset(mrb_state *mrb, mrb_value self)
+// For CDC BUG workaround
+static mrb_value mrb_remocon_usbreset(mrb_state *mrb, mrb_value self)
 {
+	int res = 0;
+	mrb_int vid, pid;
+
+	mrb_get_args(mrb, "ii", &vid, &pid);
+
 	struct libusb20_backend *pbe;
 	struct libusb20_device *pdev = NULL;
 
@@ -213,12 +218,16 @@ static mrb_value mrb_remocon_cdcreset(mrb_state *mrb, mrb_value self)
 
 		ddesc = libusb20_dev_get_device_desc(pdev);
 
-		if (ddesc->idVendor == 0x2047 && ddesc->idProduct == 0x03df)
+		if (ddesc->idVendor == vid && ddesc->idProduct == pid) {
 			libusb20_dev_reset(pdev);
+			res += 1;
+		}
 
 		libusb20_dev_close(pdev);
 	}
 	libusb20_be_free(pbe);
+
+	return mrb_fixnum_value(res);
 }
 #endif
 
@@ -232,7 +241,7 @@ void mrb_mruby_remocon_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, remocon, "recieve", mrb_remocon_recieve, MRB_ARGS_NONE());
   mrb_define_method(mrb, remocon, "version", mrb_remocon_version, MRB_ARGS_NONE());
 #if defined( __FreeBSD__ )
-  mrb_define_class_method(mrb, remocon, "cdcreset", mrb_remocon_cdcreset, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, remocon, "usbreset", mrb_remocon_usbreset, MRB_ARGS_REQ(2));
 #endif
   DONE;
 }
