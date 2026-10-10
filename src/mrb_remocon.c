@@ -16,6 +16,8 @@
 #include "hidapi.h"
 #elif defined( __FreeBSD__ )
 #include <libusb.h>
+#include <libusb20_desc.h>
+#include <libusb20.h>
 #else
 #include <libusb-1.0/libusb.h>
 #endif
@@ -195,6 +197,31 @@ static mrb_value mrb_remocon_version(mrb_state *mrb, mrb_value self)
 	return mrb_str_new_cstr(mrb, (const char*)tmp + 1);
 }
 
+#if defined( __FreeBSD__ )
+// This is CDC BUG workaround
+static mrb_value mrb_remocon_cdcreset(mrb_state *mrb, mrb_value self)
+{
+	struct libusb20_backend *pbe;
+	struct libusb20_device *pdev = NULL;
+
+	pbe = libusb20_be_alloc_default();
+
+	while ((pdev = libusb20_be_device_foreach(pbe, pdev))) {
+		struct LIBUSB20_DEVICE_DESC_DECODED *ddesc;
+
+		libusb20_dev_open(pdev, 0);
+
+		ddesc = libusb20_dev_get_device_desc(pdev);
+
+		if (ddesc->idVendor == 0x2047 && ddesc->idProduct == 0x03df)
+			libusb20_dev_reset(pdev);
+
+		libusb20_dev_close(pdev);
+	}
+	libusb20_be_free(pbe);
+}
+#endif
+
 void mrb_mruby_remocon_gem_init(mrb_state *mrb)
 {
   struct RClass *remocon;
@@ -204,6 +231,9 @@ void mrb_mruby_remocon_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, remocon, "send", mrb_remocon_send, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, remocon, "recieve", mrb_remocon_recieve, MRB_ARGS_NONE());
   mrb_define_method(mrb, remocon, "version", mrb_remocon_version, MRB_ARGS_NONE());
+#if defined( __FreeBSD__ )
+  mrb_define_class_method(mrb, remocon, "cdcreset", mrb_remocon_cdcreset, MRB_ARGS_NONE());
+#endif
   DONE;
 }
 
